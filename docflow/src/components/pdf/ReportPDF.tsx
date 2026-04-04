@@ -108,7 +108,7 @@ export const ReportPDF = ({ data }: { data: ReportData }) => {
               return (
                 <View key={idx}>
                   <Text style={styles.chartLabel}>{point.label} - {point.value}</Text>
-                  <View style={[styles.chartBar, { width: \`\${Math.max(10, widthPct)}%\` }]} />
+                  <View style={[styles.chartBar, { width: `${Math.max(10, widthPct)}%` }]} />
                 </View>
               );
             })}
@@ -116,7 +116,7 @@ export const ReportPDF = ({ data }: { data: ReportData }) => {
         )}
 
         <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => (
-          \`Page \${pageNumber} of \${totalPages}\`
+          `Page ${pageNumber} of ${totalPages}`
         )} />
       </Page>
     </Document>

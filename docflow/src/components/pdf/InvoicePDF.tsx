@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
 });
 
 const formatCurrency = (val: number, curr: string) => {
-  return \`\${val.toFixed(2)} \${curr}\`;
+  return `${val.toFixed(2)} ${curr}`;
 };
 
 const getBadgeColor = (status: string) => {

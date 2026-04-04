@@ -23,7 +23,7 @@ export const documentRouter = createTRPCRouter({
     }))
     .mutation(async ({ ctx, input }) => {
       return ctx.prisma.document.create({
-        data: { ...input, userId: ctx.userId },
+        data: { ...input, inputData: input.inputData as any, userId: ctx.userId },
       })
     }),
 
