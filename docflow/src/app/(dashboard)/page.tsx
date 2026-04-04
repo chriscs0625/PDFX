@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { trpc } from "@/lib/trpc/client";
 import { DocumentCard } from "@/components/ui/DocumentCard";

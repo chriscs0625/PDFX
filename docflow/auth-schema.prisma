@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,37 +9,38 @@ datasource db {
 }
 
 model User {
-  id            String     @id @default(cuid())
+  id            String    @id
   name          String
-  email         String     @unique
-  emailVerified Boolean    @default(false)
+  email         String
+  emailVerified Boolean   @default(false)
   image         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-  documents     Document[]
 
+  @@unique([email])
   @@map("user")
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  userId    String
-  token     String   @unique
+  id        String   @id
   expiresAt DateTime
+  token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([token])
   @@index([userId])
   @@map("session")
 }
 
 model Account {
-  id                    String    @id @default(cuid())
+  id                    String    @id
   accountId             String
   providerId            String
   userId                String
@@ -49,16 +51,16 @@ model Account {
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
   scope                 String?
+  password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-  password              String?
 
   @@index([userId])
   @@map("account")
 }
 
 model Verification {
-  id         String   @id @default(cuid())
+  id         String   @id
   identifier String
   value      String
   expiresAt  DateTime
@@ -67,22 +69,4 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
-}
-
-model Document {
-  id        String       @id @default(cuid())
-  userId    String
-  type      DocumentType
-  title     String
-  inputData Json
-  fileUrl   String?
-  createdAt DateTime     @default(now())
-  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-enum DocumentType {
-  INVOICE
-  REPORT
-  CERTIFICATE
-  GRADE_REPORT
 }
