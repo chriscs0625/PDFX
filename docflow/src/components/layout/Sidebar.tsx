@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function Sidebar() {
+export function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
 
   const links = [
@@ -14,7 +14,7 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-gray-50 border-r min-h-[calc(100vh-4rem)] p-4 flex flex-col gap-2">
+    <aside className={`w-64 bg-gray-50 border-r min-h-[calc(100vh-4rem)] p-4 flex flex-col gap-2 ${className || ""}`}>
       {links.map((link) => {
         const isActive = pathname === link.href;
         return (

@@ -21,8 +21,8 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {documents.map((doc) => (
-            <DocumentCard key={doc.id} doc={doc as any} onDelete={() => {}} onDownload={() => {}} />
+          {(documents as any[]).map((doc: any) => (
+            <DocumentCard key={doc.id} doc={doc} onDelete={() => {}} onDownload={() => {}} />
           ))}
         </div>
       )}
