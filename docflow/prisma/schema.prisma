@@ -5,3 +5,38 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  createdAt DateTime   @default(now())
+  documents Document[]
+  sessions  Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Document {
+  id           String       @id @default(cuid())
+  userId       String
+  type         DocumentType
+  title        String
+  inputData    Json
+  fileUrl      String?
+  createdAt    DateTime     @default(now())
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum DocumentType {
+  INVOICE
+  REPORT
+  CERTIFICATE
+  GRADE_REPORT
+}
