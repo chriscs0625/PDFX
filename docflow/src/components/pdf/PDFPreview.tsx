@@ -49,13 +49,16 @@ export function PDFPreview({ type, data }: PDFPreviewProps) {
         </button>
       </div>
       <div className="w-full h-[600px] border border-gray-200 rounded-lg overflow-hidden">
-        {renderDocument() ? (
-          <PDFViewer key={key} width="100%" height="100%" className="border-0">
-            {renderDocument()}
-          </PDFViewer>
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">Invalid Document Type</div>
-        )}
+        {(() => {
+          const doc = renderDocument();
+          return doc ? (
+            <PDFViewer key={key} width="100%" height="100%" className="border-0">
+              {doc as any}
+            </PDFViewer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">Invalid Document Type</div>
+          );
+        })()}
       </div>
     </div>
   );

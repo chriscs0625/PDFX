@@ -22,7 +22,7 @@ export default function DashboardPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {documents.map((doc) => (
-            <DocumentCard key={doc.id} document={doc} onDelete={() => {}} onDownload={() => {}} />
+            <DocumentCard key={doc.id} doc={doc as any} onDelete={() => {}} onDownload={() => {}} />
           ))}
         </div>
       )}

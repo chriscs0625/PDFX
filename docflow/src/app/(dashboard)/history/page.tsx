@@ -55,7 +55,7 @@ export default function HistoryPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {filtered.map(doc => (
-            <DocumentCard key={doc.id} document={doc} onDelete={handleDelete} onDownload={handleDownload} />
+            <DocumentCard key={doc.id} doc={doc as any} onDelete={handleDelete} onDownload={handleDownload} />
           ))}
         </div>
       )}

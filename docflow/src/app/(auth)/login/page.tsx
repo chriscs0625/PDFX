@@ -16,7 +16,7 @@ export default function LoginPage() {
     setError("");
     const { error } = await signIn.email({ email, password });
     if (error) {
-      setError(error.message);
+      setError(error.message || "Login failed");
     } else {
       router.push("/");
     }

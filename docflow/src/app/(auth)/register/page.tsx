@@ -17,7 +17,7 @@ export default function RegisterPage() {
     setError("");
     const { error } = await signUp.email({ email, password, name });
     if (error) {
-      setError(error.message);
+      setError(error.message || "Registration failed");
     } else {
       router.push("/");
     }
