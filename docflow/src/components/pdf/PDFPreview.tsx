@@ -11,7 +11,7 @@ const InvoicePDF = dynamic(() => import("./InvoicePDF").then(m => m.InvoicePDF),
 const ReportPDF = dynamic(() => import("./ReportPDF").then(m => m.ReportPDF), { ssr: false });
 const CertificatePDF = dynamic(() => import("./CertificatePDF").then(m => m.CertificatePDF), { ssr: false });
 const GradeReportPDF = dynamic(() => import("./GradeReportPDF").then(m => m.GradeReportPDF), { ssr: false });
-const PDFViewer = dynamic(() => import("@react-pdf/renderer").then(m => m.PDFViewer), { ssr: false });
+const PDFViewer = dynamic(() => import("./PDFViewerWrapper"), { ssr: false });
 
 interface PDFPreviewProps {
   type: "INVOICE" | "REPORT" | "CERTIFICATE" | "GRADE_REPORT";
