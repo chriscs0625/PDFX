@@ -18,7 +18,7 @@ export const documentRouter = createTRPCRouter({
     .input(z.object({
       type:      z.enum(["INVOICE","REPORT","CERTIFICATE","GRADE_REPORT"]),
       title:     z.string(),
-      inputData: z.record(z.unknown()),
+      inputData: z.record(z.string(), z.unknown()),
       fileUrl:   z.string().url().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
