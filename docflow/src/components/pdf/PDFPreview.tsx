@@ -11,7 +11,6 @@ const InvoicePDF = dynamic(() => import("./InvoicePDF").then(m => m.InvoicePDF),
 const ReportPDF = dynamic(() => import("./ReportPDF").then(m => m.ReportPDF), { ssr: false });
 const CertificatePDF = dynamic(() => import("./CertificatePDF").then(m => m.CertificatePDF), { ssr: false });
 const GradeReportPDF = dynamic(() => import("./GradeReportPDF").then(m => m.GradeReportPDF), { ssr: false });
-const PDFViewer = dynamic(() => import("./PDFViewerWrapper"), { ssr: false });
 
 interface PDFPreviewProps {
   type: "INVOICE" | "REPORT" | "CERTIFICATE" | "GRADE_REPORT";
@@ -21,12 +20,16 @@ interface PDFPreviewProps {
 export function PDFPreview({ type, data }: PDFPreviewProps) {
   const [isClient, setIsClient] = useState(false);
   const [key, setKey] = useState(0);
+  const [PDFComponent, setPDFComponent] = useState<any>(null);
 
   useEffect(() => {
     setIsClient(true);
+    import("@react-pdf/renderer").then((mod) => {
+      setPDFComponent(() => mod.PDFViewer);
+    });
   }, []);
 
-  if (!isClient) return <div className="w-full h-[600px] animate-pulse bg-gray-200 rounded-md" />;
+  if (!isClient || !PDFComponent) return <div className="w-full h-[600px] animate-pulse bg-gray-200 rounded-md" />;
 
   const renderDocument = () => {
     switch (type) {
@@ -52,9 +55,9 @@ export function PDFPreview({ type, data }: PDFPreviewProps) {
         {(() => {
           const doc = renderDocument();
           return doc ? (
-            <PDFViewer key={key} width="100%" height="100%" className="border-0">
+            <PDFComponent key={key} width="100%" height="100%" className="border-0">
               {doc as any}
-            </PDFViewer>
+            </PDFComponent>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-500">Invalid Document Type</div>
           );
