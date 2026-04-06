@@ -91,7 +91,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-4">
             <span className="text-sm font-medium">{session.user?.name || session.user?.email}</span>
             <button
-              onClick={() => signOut({ fetchOptions: { onSuccess: () => router.push("/login") } })}
+              onClick={() => signOut({ fetchOptions: { onSuccess: () => router.push("/auth/login") } })}
               className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-300 transition-colors rounded-lg hover:text-white hover:bg-red-500/20 group"
             >
               <LogOut className="w-4 h-4 group-hover:text-red-500 transition-colors" />
