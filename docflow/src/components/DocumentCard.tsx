@@ -1,7 +1,15 @@
 import React from 'react';
 import { FileText, FileSpreadsheet, Medal, BookOpen, Download, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { DocumentType } from '@prisma/client';
+
+export const DocumentType = {
+  INVOICE: 'INVOICE',
+  REPORT: 'REPORT',
+  CERTIFICATE: 'CERTIFICATE',
+  GRADE_REPORT: 'GRADE_REPORT',
+} as const;
+
+export type DocumentType = typeof DocumentType[keyof typeof DocumentType];
 
 interface DocumentCardProps {
   id: string;
