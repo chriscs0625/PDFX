@@ -2,7 +2,9 @@
   "name": "docflow",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/dev-server.mjs",
+    "dev:next": "next dev --hostname 0.0.0.0 --port 3000",
+    "prisma:generate": "prisma generate",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
