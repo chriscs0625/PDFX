@@ -23,7 +23,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (!isPending && !session) {
-      router.push("/login");
+      router.push("/auth/login");
     }
   }, [session, isPending, router]);
 
