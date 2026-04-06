@@ -1,62 +1,137 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { trpc } from "@/lib/trpc/client";
-import { DocumentCard } from "@/components/ui/DocumentCard";
+import { Search, Download, History as HistoryIcon, Filter } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 export default function HistoryPage() {
-  const { data: documents, isLoading, refetch } = trpc.document.list.useQuery();
-  const [filter, setFilter] = useState("ALL");
+  const { data: documents, isLoading } = trpc.document.list.useQuery();
   const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string>("ALL");
+  const listRef = useRef<HTMLDivElement>(null);
 
-  const deleteMutation = trpc.document.delete.useMutation({
-    onSuccess: () => refetch()
+  const filteredDocs = documents?.filter((doc: any) => {
+    const matchesSearch = doc.title.toLowerCase().includes(search.toLowerCase());
+    const matchesType = typeFilter === "ALL" || doc.type === typeFilter;
+    return matchesSearch && matchesType;
   });
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this document?")) {
-      await deleteMutation.mutateAsync({ id });
+  useGSAP(() => {
+    if (filteredDocs && filteredDocs.length > 0 && listRef.current) {
+      gsap.from(listRef.current.children, {
+        y: 20,
+        opacity: 0,
+        duration: 0.4,
+        stagger: 0.08,
+      });
     }
-  };
+  }, [filteredDocs?.length, typeFilter]); // Re-run when length or filter changes
 
-  const handleDownload = (fileUrl: string) => {
-    window.open(fileUrl, "_blank");
-  };
-
-  if (isLoading) return <div>Loading history...</div>;
-
-  const filtered = documents?.filter(d => 
-    (filter === "ALL" || d.type === filter) &&
-    (d.title.toLowerCase().includes(search.toLowerCase()))
-  );
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center text-gray-500">
+        Loading document history...
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Document History</h1>
-      
-      <div className="flex gap-4">
-        <input 
-          placeholder="Search items..." 
-          value={search} 
-          onChange={e => setSearch(e.target.value)} 
-          className="border border-gray-300 rounded px-4 py-2 flex-grow"
-        />
-        <select value={filter} onChange={e => setFilter(e.target.value)} className="border border-gray-300 rounded px-4 py-2">
-          <option value="ALL">All Types</option>
-          <option value="INVOICE">Invoices</option>
-          <option value="REPORT">Reports</option>
-          <option value="CERTIFICATE">Certificates</option>
-          <option value="GRADE_REPORT">Grade Reports</option>
-        </select>
+    <div className="flex flex-col h-full bg-[#0a0a0a]">
+      <h1 className="text-2xl font-bold text-white tracking-tight mb-8">Document History</h1>
+
+      <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        <div className="relative flex-1">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search documents by name..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+          />
+        </div>
+        <div className="relative min-w-[200px]">
+          <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 appearance-none bg-[#1a1a1a] border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+          >
+            <option value="ALL">All Types</option>
+            <option value="INVOICE">Invoice</option>
+            <option value="REPORT">Report</option>
+            <option value="CERTIFICATE">Certificate</option>
+            <option value="GRADE_REPORT">Grade Report</option>
+          </select>
+        </div>
       </div>
 
-      {!filtered || filtered.length === 0 ? (
-        <div className="text-center py-20 border rounded-lg text-gray-500">No documents found.</div>
+      {!filteredDocs || filteredDocs.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center opacity-80">
+          <div className="w-20 h-20 mb-6 rounded-full bg-white/5 flex items-center justify-center">
+            <HistoryIcon className="w-10 h-10 text-gray-500" />
+          </div>
+          <h3 className="text-xl font-semibold text-white mb-2">No documents found</h3>
+          <p className="text-gray-400 text-center max-w-sm">
+            {documents?.length === 0
+              ? "You haven't created any documents yet."
+              : "No documents match your chosen search and filters."}
+          </p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {filtered.map(doc => (
-            <DocumentCard key={doc.id} doc={doc as any} onDelete={handleDelete} onDownload={handleDownload} />
-          ))}
+        <div ref={listRef} className="flex flex-col gap-3">
+          {filteredDocs.map((doc: any) => {
+            let colorClass = "text-gray-400 bg-gray-400/10";
+            if (doc.type === "INVOICE") colorClass = "text-blue-500 bg-blue-500/10";
+            if (doc.type === "REPORT") colorClass = "text-purple-500 bg-purple-500/10";
+            if (doc.type === "CERTIFICATE") colorClass = "text-amber-500 bg-amber-500/10";
+            if (doc.type === "GRADE_REPORT") colorClass = "text-green-500 bg-green-500/10";
+
+            return (
+              <div
+                key={doc.id}
+                className="group flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl bg-[#1a1a1a] border border-white/5 hover:border-white/10 transition-all hover:bg-white/5"
+              >
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-white font-medium truncate mb-1" title={doc.title}>{doc.title}</h4>
+                  <div className="flex gap-3 text-sm text-gray-500">
+                    <span>
+                      {new Date(doc.createdAt).toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between sm:justify-end gap-6">
+                  <span className={cn("px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap", colorClass)}>
+                    {doc.type.replace('_', ' ')}
+                  </span>
+                  
+                  {doc.fileUrl ? (
+                    <a
+                      href={doc.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+                      title="Download/View PDF"
+                    >
+                      <Download className="w-4 h-4" />
+                    </a>
+                  ) : (
+                    <div className="w-8 h-8 flex items-center justify-center opacity-30 cursor-not-allowed">
+                      <Download className="w-4 h-4" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
