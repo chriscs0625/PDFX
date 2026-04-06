@@ -102,7 +102,12 @@ export default function NewDocumentPage() {
   }, [type]);
 
   const renderForm = () => {
-    const commonProps = { onSubmit: handleGenerate, isGenerating };
+    const commonProps = { 
+      onSubmit: handleGenerate, 
+      isGenerating, 
+      onPreview: handleGenerate, 
+      onGenerate: handleGenerate 
+    };
     switch (type) {
       case "INVOICE": return <InvoiceForm {...commonProps} />;
       case "REPORT": return <ReportForm {...commonProps} />;
